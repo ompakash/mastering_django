@@ -4,6 +4,26 @@ from django.utils import timezone
 from django.core.validators import RegexValidator
 # Create your models here.
 
+from django.contrib.auth.models import AbstractUser,PermissionsMixin,AbstractBaseUser
+from django.utils.translation import gettext_lazy as _
+from firstapp.managers import CustomUserManager
+
+class CustomUser(AbstractBaseUser,PermissionsMixin):
+    email = models.EmailField(_('email address'), unique=True)
+    name = models.CharField(max_length=255)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
+    
+
 
 class Product(models.Model):
     product_id = models.AutoField(primary_key=True) 
@@ -34,7 +54,7 @@ class CartManager(models.Manager):
 
 class Cart (models.Model):
     cart_id = models.AutoField (primary_key=True)
-    user = models.ForeignKey(User, on_delete = models.CASCADE) 
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE) 
     created_on = models.DateTimeField(default = timezone.now)
 
     objects = CartManager()
@@ -57,5 +77,9 @@ class Order (models.Model):
     (2, 'Ready For Shipment'),
     (3, 'Shipped'),
     (4, 'Delivered')) 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     status = models.IntegerField(choices = status_choices, default=1)
+
+class Deal(models.Model):
+    user = models.ManyToManyField(CustomUser)
+    deal_name = models.CharField(max_length = 255)
