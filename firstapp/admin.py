@@ -9,6 +9,8 @@ admin.site.register(Product)
 # admin.site.register(Cart)
 admin.site.register(ProductInCart)
 admin.site.register(Order)
+admin.site.register(Customer)
+admin.site.register(Seller)
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -18,7 +20,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
         (None, {'fields': ('email','password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),   #'is_customer' , 'is_seller'
+        ('Permissions', {'fields': ('is_staff', 'is_active','is_customer' , 'is_seller')}),   
     )
     add_fieldsets = (
         (None, {

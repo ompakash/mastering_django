@@ -9,11 +9,14 @@ from django.utils.translation import gettext_lazy as _
 from firstapp.managers import CustomUserManager
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('email address main'), unique=True)
     name = models.CharField(max_length=255)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
+
+    is_customer = models.BooleanField(default=True)
+    is_seller = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -22,7 +25,16 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
+class Customer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
+    address = models.CharField(max_length=1000)
+
+class Seller(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
+    gst = models.CharField(max_length = 10)
+    warehouse_location = models.CharField(max_length = 1000)    
+
 
 
 class Product(models.Model):
