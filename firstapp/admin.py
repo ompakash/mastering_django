@@ -11,6 +11,7 @@ admin.site.register(ProductInCart)
 admin.site.register(Order)
 admin.site.register(Customer)
 admin.site.register(Seller)
+admin.site.register(Contact)
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
