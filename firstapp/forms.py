@@ -27,3 +27,13 @@ class ContactUsForm(forms.ModelForm):
             'query',
             'name'
         ]
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'email',
+            'name',
+            'password1',
+            'password2',
+        ]

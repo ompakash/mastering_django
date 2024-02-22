@@ -63,3 +63,8 @@ class ContactUs(FormView):
             #form.errors['__all__'] = 'Query length is not right. It should be in 10 digits.'
         response = super().form_invalid(form)
         return response
+    
+class RegisterView(CreateView):
+    template_name = 'firstapp/register.html'
+    form_class = RegistrationForm
+    success_url = reverse_lazy('index')

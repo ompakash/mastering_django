@@ -5,13 +5,17 @@ from django.contrib.auth.admin import UserAdmin
 from firstapp.forms import *
 
 # admin.site.unregister(User)
+# admin.site.register(Seller)
 admin.site.register(Product)
 # admin.site.register(Cart)
 admin.site.register(ProductInCart)
 admin.site.register(Order)
-admin.site.register(Customer)
-admin.site.register(Seller)
+# admin.site.register(Customer)
 admin.site.register(Contact)
+
+# class SellerAdditionalInline(admin.TabularInline):
+#     model = SellerAdditional
+
 
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -31,6 +35,11 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ('email',)
     ordering = ('email',)
+
+# class SellerAdmin(admin.ModelAdmin):
+#     inlines = (
+#         SellerAdditionalInline,
+#     )
 
 admin.site.register(CustomUser,CustomUserAdmin)
 
@@ -68,3 +77,6 @@ class CartAdmin(admin.ModelAdmin):
     list_filter = ['user__is_staff','created_on',]
     search_fields = ['user__username']
 
+
+# admin.site.register(Seller, SellerAdmin)
+# admin.site.register(SellerAdditional)
