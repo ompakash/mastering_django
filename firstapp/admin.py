@@ -8,13 +8,14 @@ from firstapp.forms import *
 # admin.site.register(Seller)
 admin.site.register(Product)
 # admin.site.register(Cart)
+admin.site.register(Deal)
 admin.site.register(ProductInCart)
 admin.site.register(Order)
-# admin.site.register(Customer)
+admin.site.register(Customer)
 admin.site.register(Contact)
 
-# class SellerAdditionalInline(admin.TabularInline):
-#     model = SellerAdditional
+class SellerAdditionalInline(admin.TabularInline):
+    model = SellerAdditional
 
 
 class CustomUserAdmin(UserAdmin):
@@ -24,8 +25,8 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'is_staff', 'is_active',)
     list_filter = ('email', 'is_staff', 'is_active',)
     fieldsets = (
-        (None, {'fields': ('email','password')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active','is_customer' , 'is_seller')}),   
+        (None, {'fields': ('email','name','type','password')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active')}),   
     )
     add_fieldsets = (
         (None, {
@@ -36,10 +37,10 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email',)
     ordering = ('email',)
 
-# class SellerAdmin(admin.ModelAdmin):
-#     inlines = (
-#         SellerAdditionalInline,
-#     )
+class SellerAdmin(admin.ModelAdmin):
+    inlines = (
+        SellerAdditionalInline,
+    )
 
 admin.site.register(CustomUser,CustomUserAdmin)
 
@@ -78,5 +79,5 @@ class CartAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
 
 
-# admin.site.register(Seller, SellerAdmin)
-# admin.site.register(SellerAdditional)
+admin.site.register(Seller, SellerAdmin)
+admin.site.register(SellerAdditional)

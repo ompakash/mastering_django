@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from firstapp.forms import *
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, FormView, CreateView
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 class Index(TemplateView):
@@ -64,7 +66,46 @@ class ContactUs(FormView):
         response = super().form_invalid(form)
         return response
     
+# class RegisterViewSeller(CreateView):
+#     template_name = 'firstapp/register.html'
+#     form_class = RegistrationForm
+#     success_url = reverse_lazy('index')
+    
+#     def post(self, request, *args, **kwargs):
+#         response = super().post(request, *args, **kwargs)
+#         if response.status_code == 302:
+#             gst = request.POST.get('gst')
+#             warehouse_location = request.POST.get('warehouse_location')
+#             user = CustomUser.objects.get(email = request.POST.get('email'))
+#             s_add = SellerAdditional.objects.create(user = user, gst = gst, warehouse_location = warehouse_location)
+#             return response
+#         else:
+#             return response
+    
+
 class RegisterView(CreateView):
-    template_name = 'firstapp/register.html'
+    template_name = 'firstapp/registerbasicuser.html'
     form_class = RegistrationForm
     success_url = reverse_lazy('index')
+
+class LoginViewUser(LoginView):
+    template_name = "firstapp/login.html"
+    #success_url = reverse_lazy('index')
+
+
+class RegisterViewSeller(LoginRequiredMixin,CreateView):
+    template_name = 'firstapp/registerseller.html'
+    form_class = RegistrationFormSeller2
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.type.append(user.Types.SELLER)
+        user.save()
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+
+class LogoutViewUser(LogoutView):
+    success_url = reverse_lazy('index')
+

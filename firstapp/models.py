@@ -2,11 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import RegexValidator
-# Create your models here.
+from multiselectfield import MultiSelectField
+from multiselectfield.validators import MaxValueMultiFieldValidator,validators, MaxChoicesValidator
+# from django.core.validators import MaxValueValidator
+
+
 
 from django.contrib.auth.models import AbstractUser,PermissionsMixin,AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from firstapp.managers import CustomUserManager
+from django.db.models import Q
+
+
+
+
+
+
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(_('email address main'), unique=True)
@@ -24,7 +35,10 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
 
     default_type = Types.CUSTOMER
     
-    type = models.CharField(_('Type'), max_length=255, choices=Types.choices, default=default_type) 
+    # type = models.CharField(_('Type'), max_length=255, choices=Types.choices, default=default_type)
+    type = MultiSelectField(choices=Types.choices, default=[], null=True, blank=True)
+
+    # type = MultiSelectField(choices=Types.choices, max_choices=5, default=[], null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -36,7 +50,8 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     
     def save(self, *args, **kwargs):
         if not self.id:
-            self.type = self.default_type
+            self.type.append(self.default_type)
+            # self.type = self.default_type
         return super().save(*args, **kwargs)
     
 
@@ -51,11 +66,13 @@ class SellerAdditional(models.Model):
 
 class SellerManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
-        return super().get_queryset(*args, **kwargs).filter(type = CustomUser.Types.SELLER)
+        # return super().get_queryset(*args, **kwargs).filter(type = CustomUser.Types.SELLER)
+        return super().get_queryset(*args, **kwargs).filter(Q(type__contains = CustomUser.Types.SELLER))
 
 class CustomerManager(models.Manager):
     def get_queryset(self,*args, **kwargs):
-        return super().get_queryset(*args, **kwargs).filter(type = CustomUser.Types.CUSTOMER)
+        # return super().get_queryset(*args, **kwargs).filter(type = CustomUser.Types.CUSTOMER)
+        return super().get_queryset(*args, **kwargs).filter(Q(type__contains = CustomUser.Types.CUSTOMER))
 
 
 # proxy model, it will not create a seperate table
